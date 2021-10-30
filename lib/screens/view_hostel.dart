@@ -17,7 +17,7 @@ class ViewHostel extends StatefulWidget {
 class _ViewHostelState extends State<ViewHostel> {
   @override
   int _currentIndex = 0;
-  PageController _pageController;
+  PageController? _pageController;
 
   @override
   void initState() {
@@ -27,7 +27,7 @@ class _ViewHostelState extends State<ViewHostel> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _pageController!.dispose();
     super.dispose();
   }
 
@@ -55,7 +55,7 @@ class _ViewHostelState extends State<ViewHostel> {
         selectedIndex: _currentIndex,
         onItemSelected: (index) {
           setState(() => _currentIndex = index);
-          _pageController.jumpToPage(index);
+          _pageController!.jumpToPage(index);
         },
         items: <BottomNavyBarItem>[
           BottomNavyBarItem(

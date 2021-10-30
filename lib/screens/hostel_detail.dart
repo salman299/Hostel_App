@@ -19,8 +19,9 @@ class HostelDetail extends StatefulWidget {
 
 class _HostelDetailState extends State<HostelDetail> {
   int currentIndexPage = 0;
-  ScrollController _controller;
+  ScrollController? _controller;
   bool _showAppBar = false;
+  Hostel? hostel;
   static const List<String> fileNames = [
     'assets/demo.jpg',
     'assets/demo.jpg',
@@ -30,7 +31,7 @@ class _HostelDetailState extends State<HostelDetail> {
   ];
 
   _scrollListener() {
-    if (_controller.offset >= MediaQuery.of(context).size.height * 0.45)
+    if (_controller!.offset >= MediaQuery.of(context).size.height * 0.45)
       setState(() {
         _showAppBar = true;
       });
@@ -45,15 +46,21 @@ class _HostelDetailState extends State<HostelDetail> {
   void initState() {
     // TODO: implement initState
     _controller = ScrollController();
-    _controller.addListener(_scrollListener);
+    _controller!.addListener(_scrollListener);
     super.initState();
+  }
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+
+    final index = ModalRoute.of(context)!.settings.arguments;
+    hostel = Provider.of<Hostels>(context, listen: false).items[index];
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    final index = ModalRoute.of(context).settings.arguments;
-    final Hostel hostel =
-        Provider.of<Hostels>(context, listen: false).items[index];
+
     final dSize = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -61,7 +68,7 @@ class _HostelDetailState extends State<HostelDetail> {
       appBar: !_showAppBar
           ? null
           : AppBar(
-              title: Text(hostel.name),
+              title: Text(hostel!.name!),
               elevation: 5,
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
@@ -70,7 +77,7 @@ class _HostelDetailState extends State<HostelDetail> {
                 ),
               ),
               actions: <Widget>[
-                IconButton(icon: Icon(CustomIcons.heart)),
+                IconButton(icon: Icon(CustomIcons.heart), onPressed: () {  },),
               ],
             ),
       body: SingleChildScrollView(
@@ -83,7 +90,7 @@ class _HostelDetailState extends State<HostelDetail> {
               child: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
-                  if (hostel.images.length == 0)
+                  if (hostel!.images!.length == 0)
                     Container(
                       margin: EdgeInsets.only(bottom: 10),
                       height: dSize.height * 0.45,
@@ -106,12 +113,12 @@ class _HostelDetailState extends State<HostelDetail> {
                       ),
                       // child: Image.asset(fileNames[index],height: dSize.height * 0.55,fit: BoxFit.cover,width: dSize.width+50,),
                     ),
-                  if (hostel.images.length != 0)
+                  if (hostel!.images!.length != 0)
                     Container(
                       height: dSize.height * 0.45,
                       width: dSize.width,
                       child: PageView.builder(
-                        itemCount: hostel.images.length,
+                        itemCount: hostel!.images!.length,
                         onPageChanged: (val) {
                           setState(() {
                             currentIndexPage = val;
@@ -138,7 +145,7 @@ class _HostelDetailState extends State<HostelDetail> {
                                 ],
                               ),
                                child: CachedNetworkImage(
-                                 imageUrl: hostel.images[index],
+                                 imageUrl: hostel!.images![index],
                                  placeholderFadeInDuration: Duration(seconds: 2),
                                  placeholder:(context,url)=>Opacity(child: Image.asset("assets/hotel-1.png"), opacity: 0.5,),
                                  fit: BoxFit.cover,
@@ -174,7 +181,7 @@ class _HostelDetailState extends State<HostelDetail> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text(hostel.name,
+                        Text(hostel!.name!,
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: Colors.white,
@@ -190,7 +197,7 @@ class _HostelDetailState extends State<HostelDetail> {
                             color: Colors.white.withOpacity(0.50),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Text(hostel.genderCategory,
+                          child: Text(hostel!.genderCategory!,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
@@ -201,13 +208,13 @@ class _HostelDetailState extends State<HostelDetail> {
                   ),
                   Positioned(
                     bottom: 30,
-                    child: hostel.images.length == 0
+                    child: hostel!.images!.length == 0
                         ? Container()
                         : Container(
                             alignment: Alignment.center,
                             width: dSize.width,
                             child: DotsIndicator(
-                              dotsCount: hostel.images.length,
+                              dotsCount: hostel!.images!.length,
                               position: currentIndexPage.roundToDouble(),
                               decorator: DotsDecorator(
                                 spacing: EdgeInsets.all(3),
@@ -237,13 +244,13 @@ class _HostelDetailState extends State<HostelDetail> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        hostel.name,
+                        hostel!.name!,
                         style: TextStyle(
                             fontSize: dSize.height * 0.03,
                             color: Color(0xFFC42B0B),
                             fontWeight: FontWeight.w600),
                       ),
-                      Text(hostel.category)
+                      Text(hostel!.category!)
                     ],
                   ),
                   Text(
@@ -301,15 +308,15 @@ class _HostelDetailState extends State<HostelDetail> {
                                     fontWeight: FontWeight.w700)),
                           ],
                         ),
-                        for (int i = 0; i < hostel.roomCategories.length; i++)
+                        for (int i = 0; i < hostel!.roomCategories!.length; i++)
                           TableRow(
                             children: [
-                              Text(hostel.roomCategories[i].bed),
-                              Text(hostel.roomCategories[i].isBath),
-                              Text(hostel.roomCategories[i].isAC),
-                              Text(hostel.roomCategories[i].isFridge),
+                              Text(hostel!.roomCategories![i].bed),
+                              Text(hostel!.roomCategories![i].isBath),
+                              Text(hostel!.roomCategories![i].isAC),
+                              Text(hostel!.roomCategories![i].isFridge),
                               Text(
-                                hostel.roomCategories[i].rent.toString(),
+                                hostel!.roomCategories![i].rent.toString(),
                                 style: TextStyle(color: Color(0xFFC42B0B)),
                               ),
                             ],
@@ -344,7 +351,7 @@ class _HostelDetailState extends State<HostelDetail> {
                           )
                         ]),
                     child: Consumer<MyFacilities>(builder: (context, mf, ch) {
-                      final myList = mf.chooseListById(hostel.facilities);
+                      final myList = mf.chooseListById(hostel!.facilities);
                       return GridView.count(
                         padding:
                             EdgeInsets.symmetric(horizontal: 5, vertical: 10),
@@ -391,7 +398,7 @@ class _HostelDetailState extends State<HostelDetail> {
                             "Phone",
                             style: TextStyle(fontWeight: FontWeight.w500),
                           ),
-                          subtitle: Text(hostel.phone),
+                          subtitle: Text(hostel!.phone!),
                           trailing: Icon(
                             Icons.phone,
                             color: Theme.of(context).primaryColor,
@@ -401,19 +408,19 @@ class _HostelDetailState extends State<HostelDetail> {
                         ListTile(
                           title: Text("WhatsApp",
                               style: TextStyle(fontWeight: FontWeight.w500)),
-                          subtitle: Text(hostel.whatsApp),
+                          subtitle: Text(hostel!.whatsApp!),
                           trailing: Icon(
                             Icons.message,
                             color: Color(0xFF4FCE5D),
                           ),
                           contentPadding: EdgeInsets.only(left: 15, right: 15),
                         ),
-                        if (hostel.facebookUrl != null)
+                        if (hostel!.facebookUrl != null)
                           ListTile(
                             title: Text("Facebook Page",
                                 style: TextStyle(fontWeight: FontWeight.w500)),
                             subtitle: Text(
-                              hostel.facebookUrl,
+                              hostel!.facebookUrl!,
                               maxLines: 1,
                             ),
                             trailing: Icon(

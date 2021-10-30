@@ -7,7 +7,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin{
-  Timer timer;
+  late Timer timer;
   void startTimer() {
     // Start the periodic timer which prints something every 1 seconds
     timer=  Timer.periodic(new Duration(seconds: 2), (time) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hostel_app/screens/add_hostel.dart';
+import 'package:hostel_app/screens/home/home_screen.dart';
 import 'package:hostel_app/screens/show_hostel.dart';
 import 'package:hostel_app/screens/view_hostel.dart';
 import '../screens/auth_screen.dart';
@@ -41,7 +42,8 @@ class MainScreen extends StatelessWidget {
               children: <Widget>[
                 GestureDetector(
                   onTap: (){
-                    Navigator.of(context).pushNamed(ViewHostel.routeName);
+                    Navigator.of(context).pushNamed(HomeScreen.routeName);
+                    //Navigator.of(context).pushNamed(ViewHostel.routeName);
                   },
                   child: Container(
                     alignment: Alignment.center,

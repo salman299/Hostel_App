@@ -1,34 +1,34 @@
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 class Auth with ChangeNotifier {
-  String _udi;
+  String? _udi;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  String get userId {
+  String? get userId {
     return _udi;
   }
 
   Future<bool> handleSignIn(String type) async {
     switch (type) {
       case "FB":
-        FacebookLoginResult facebookLoginResult = await _handleFBSignIn();
-        final accessToken = facebookLoginResult.accessToken.token;
-        if (facebookLoginResult.status == FacebookLoginStatus.loggedIn) {
-          final facebookAuthCred = FacebookAuthProvider.credential(accessToken);
-          final user = await _firebaseAuth.signInWithCredential(facebookAuthCred);
-          print("User : " + user.toString());
-          _udi=user.toString();
-          return true;
-        } else
-          return false;
+        // FacebookLoginResult facebookLoginResult = await _handleFBSignIn();
+        // final accessToken = facebookLoginResult.accessToken.token;
+        // if (facebookLoginResult.status == FacebookLoginStatus.loggedIn) {
+        //   final facebookAuthCred = FacebookAuthProvider.credential(accessToken);
+        //   final user = await _firebaseAuth.signInWithCredential(facebookAuthCred);
+        //   print("User : " + user.toString());
+        //   _udi=user.toString();
+        //   return true;
+        // } else
+        //   return false;
         break;
       case "G":
         try {
-          GoogleSignInAccount googleSignInAccount = await _handleGoogleSignIn();
+          GoogleSignInAccount googleSignInAccount = await (_handleGoogleSignIn() as FutureOr<GoogleSignInAccount>);
           final googleAuth = await googleSignInAccount.authentication;
           final googleAuthCred = GoogleAuthProvider.credential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
           final user = await _firebaseAuth.signInWithCredential(googleAuthCred);
@@ -43,28 +43,28 @@ class Auth with ChangeNotifier {
     return false;
   }
 
-  Future<FacebookLoginResult> _handleFBSignIn() async {
-    FacebookLogin facebookLogin = FacebookLogin();
-    FacebookLoginResult facebookLoginResult =
-    await facebookLogin.logIn(['email']);
-    switch (facebookLoginResult.status) {
-      case FacebookLoginStatus.cancelledByUser:
-        print("Cancelled");
-        break;
-      case FacebookLoginStatus.error:
-        print("error");
-        break;
-      case FacebookLoginStatus.loggedIn:
-        print("Logged In");
-        break;
-    }
-    return facebookLoginResult;
-  }
+  // Future<FacebookLoginResult> _handleFBSignIn() async {
+  //   FacebookLogin facebookLogin = FacebookLogin();
+  //   FacebookLoginResult facebookLoginResult =
+  //   await facebookLogin.logIn(['email']);
+  //   switch (facebookLoginResult.status) {
+  //     case FacebookLoginStatus.cancelledByUser:
+  //       print("Cancelled");
+  //       break;
+  //     case FacebookLoginStatus.error:
+  //       print("error");
+  //       break;
+  //     case FacebookLoginStatus.loggedIn:
+  //       print("Logged In");
+  //       break;
+  //   }
+  //   return facebookLoginResult;
+  // }
 
-  Future<GoogleSignInAccount> _handleGoogleSignIn() async {
+  Future<GoogleSignInAccount?> _handleGoogleSignIn() async {
     GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
-    GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+    GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
     return googleSignInAccount;
   }
 
@@ -74,7 +74,7 @@ class Auth with ChangeNotifier {
           email: email, password: password);
       if (await isEmailVerified())
       {
-        final user = result.user;
+        final user = result.user!;
         _udi = user.uid;
         notifyListeners();
         return true;
@@ -90,7 +90,7 @@ class Auth with ChangeNotifier {
           email: email, password: password);
       //await sendEmailVerification();
       //await _firebaseAuth.signOut();
-      return result.user.uid;
+      // return result.user;
     } catch (error) {
       throw (error);
     }
@@ -130,7 +130,7 @@ class Auth with ChangeNotifier {
 
   Future<void> sendEmailVerification() async {
     try {
-      final user = _firebaseAuth.currentUser;
+      final user = _firebaseAuth.currentUser!;
       return user.sendEmailVerification();
     }catch(error){
       throw (error);
@@ -139,7 +139,7 @@ class Auth with ChangeNotifier {
 
   Future<bool> isEmailVerified() async {
     try{
-      final user = _firebaseAuth.currentUser;
+      final user = _firebaseAuth.currentUser!;
       return user.emailVerified;
     }catch(error){
       throw(error);

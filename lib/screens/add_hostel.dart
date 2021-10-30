@@ -27,17 +27,17 @@ class _AddHostelState extends State<AddHostel> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final gender = ["Male", "Female", "Both"];
   final hostelType = ["Private", "Public"];
-  Hostel hostel = Hostel();
-  List<Asset> images = List<Asset>();
-  List<String> imageUrls = <String>[];
+  Hostel? hostel = Hostel();
+  List<Asset> images = [];
+  List<String>? imageUrls = <String>[];
   List<String> deleteUrls = <String>[];
   String _error = 'No Error Dectected';
 
   void deleteAsset(int index, bool isUrl) async {
     setState(() {
       if (isUrl) {
-        deleteUrls.add(imageUrls[index]);
-        imageUrls.removeAt(index);
+        deleteUrls.add(imageUrls![index]);
+        imageUrls!.removeAt(index);
       } else
         images.removeAt(index);
     });
@@ -45,10 +45,10 @@ class _AddHostelState extends State<AddHostel> {
 
   Future<dynamic> postImage(Asset imageFile) async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask =
+    Reference reference = FirebaseStorage.instance.ref().child(fileName);
+    UploadTask uploadTask =
         reference.putData((await imageFile.getByteData()).buffer.asUint8List());
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    TaskSnapshot storageTaskSnapshot = await uploadTask.whenComplete(() => null);
     print(storageTaskSnapshot.ref.getDownloadURL());
     return storageTaskSnapshot.ref.getDownloadURL();
   }
@@ -56,8 +56,8 @@ class _AddHostelState extends State<AddHostel> {
   void deleteImageByUrl() {
     deleteUrls.forEach((url) {
       FirebaseStorage.instance
-          .getReferenceFromUrl(url)
-          .then((value) => value.delete());
+          .refFromURL(url)
+          .delete();
     });
   }
 
@@ -66,7 +66,7 @@ class _AddHostelState extends State<AddHostel> {
       for (var imageFile in images) {
         final url = await postImage(imageFile);
         print(url);
-        imageUrls.add(url);
+        imageUrls!.add(url);
       }
     } catch (error) {
       throw (error);
@@ -74,32 +74,32 @@ class _AddHostelState extends State<AddHostel> {
   }
 
   void _submit(index) async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
     });
     await uploadImages();
-    hostel.images = imageUrls;
-    hostel.facilities =
+    hostel!.images = imageUrls;
+    hostel!.facilities =
         Provider.of<MyFacilities>(context, listen: false).selectedItems();
-    hostel.roomCategories =
+    hostel!.roomCategories =
         Provider.of<RoomCategories>(context, listen: false).items;
-    print(hostel.roomCategories.length);
+    print(hostel!.roomCategories!.length);
     bool result=true;
     print("Index $index");
     if (index==null) {
       print(index);
       print("Adding Hostel in List");
       result =
-      await Provider.of<Hostels>(context, listen: false).addHostel(hostel);
+      await Provider.of<Hostels>(context, listen: false).addHostel(hostel!);
        }
       else {
         print("Updating Hostel");
       result = await Provider.of<Hostels>(context, listen: false).updateHostel(
-          index, hostel);
+          index, hostel!);
       }
       if (result == true) deleteImageByUrl();
     setState(() {
@@ -109,7 +109,7 @@ class _AddHostelState extends State<AddHostel> {
   }
 
   Future<void> loadAssets() async {
-    List<Asset> resultList = List<Asset>();
+    List<Asset> resultList = [];
     String error = 'No Error Dectected';
     try {
       resultList = await MultiImagePicker.pickImages(
@@ -136,22 +136,22 @@ class _AddHostelState extends State<AddHostel> {
       _error = error;
     });
   }
-  int index=-1;
+  int? index=-1;
   bool checkOnlyFirst=true;
   @override
   void didChangeDependencies() {
     print("Refreshing all data");
     if (checkOnlyFirst){
-      final data = ModalRoute.of(context).settings.arguments;
-      index=data;
+      final data = ModalRoute.of(context)!.settings.arguments;
+      index=data as int?;
       if (data != null) {
         hostel = Provider.of<Hostels>(context, listen: false)
             .myHostel[index]
             .hostelCopy();
-        imageUrls = hostel.images;
-        Provider.of<RoomCategories>(context).addListOfItems(hostel.roomCategories);
+        imageUrls = hostel!.images;
+        Provider.of<RoomCategories>(context).addListOfItems(hostel!.roomCategories!);
         Provider.of<MyFacilities>(context, listen: false)
-            .addItemList(hostel.facilities);
+            .addItemList(hostel!.facilities!);
       }
       else{
         Provider.of<MyFacilities>(context).clear();
@@ -208,7 +208,7 @@ class _AddHostelState extends State<AddHostel> {
               children: <Widget>[
                 TextFormField(
                   style: _hintStyle,
-                  initialValue: hostel.name,
+                  initialValue: hostel!.name,
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
                     contentPadding:
@@ -216,16 +216,16 @@ class _AddHostelState extends State<AddHostel> {
                     labelText: "Hostel Name",
                   ),
                   validator: (text) {
-                    if (text.length < 3)
+                    if (text!.length < 3)
                       return "Name is very short";
                     else if (text == null) return "Field is required";
                     return null;
                   },
-                  onSaved: (text) => hostel.name = text,
+                  onSaved: (text) => hostel!.name = text,
                 ),
                 TextFormField(
                   style: _hintStyle,
-                  initialValue: hostel.phone,
+                  initialValue: hostel!.phone,
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
                     contentPadding:
@@ -233,15 +233,15 @@ class _AddHostelState extends State<AddHostel> {
                     labelText: "Phone No",
                   ),
                   validator: (text) {
-                    if (text.length < 9 || int.tryParse(text) == null)
+                    if (text!.length < 9 || int.tryParse(text) == null)
                       return "Invalid Phone";
                     else if (text == null) return "Field is required";
                     return null;
                   },
-                  onSaved: (text) => hostel.phone = text,
+                  onSaved: (text) => hostel!.phone = text,
                 ),
                 TextFormField(
-                  initialValue: hostel.whatsApp,
+                  initialValue: hostel!.whatsApp,
                   style: _hintStyle,
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
@@ -250,15 +250,15 @@ class _AddHostelState extends State<AddHostel> {
                     labelText: "WhatsApp No",
                   ),
                   validator: (text) {
-                    if (text.length < 9 || int.tryParse(text) == null)
+                    if (text!.length < 9 || int.tryParse(text) == null)
                       return "Invalid Phone";
                     else if (text == null) return "Field is required";
                     return null;
                   },
-                  onSaved: (text) => hostel.whatsApp = text,
+                  onSaved: (text) => hostel!.whatsApp = text,
                 ),
                 TextFormField(
-                  initialValue: hostel.facebookUrl,
+                  initialValue: hostel!.facebookUrl,
                   style: _hintStyle,
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
@@ -269,12 +269,12 @@ class _AddHostelState extends State<AddHostel> {
                   validator: (value) {
                     if (value != "" &&
                         !RegExp(r"(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?")
-                            .hasMatch(value)) {
+                            .hasMatch(value!)) {
                       return 'This is not Facebook URL';
                     }
                     return null;
                   },
-                  onSaved: (text) => hostel.facebookUrl = text,
+                  onSaved: (text) => hostel!.facebookUrl = text,
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -282,7 +282,7 @@ class _AddHostelState extends State<AddHostel> {
                     Expanded(
                       child: Container(
                         child: TextFormField(
-                          initialValue: hostel.address,
+                          initialValue: hostel!.address,
                           cursorColor: Theme.of(context).primaryColor,
                           style: _hintStyle,
                           decoration: InputDecoration(
@@ -292,12 +292,12 @@ class _AddHostelState extends State<AddHostel> {
                                 horizontal: 15, vertical: 10),
                           ),
                           validator: (text) {
-                            if (text.length < 10)
+                            if (text!.length < 10)
                               return "Address is to short";
                             else if (text == null) return "Address is required";
                             return null;
                           },
-                          onSaved: (text) => hostel.address = text,
+                          onSaved: (text) => hostel!.address = text,
                         ),
                       ),
                     ),
@@ -310,7 +310,7 @@ class _AddHostelState extends State<AddHostel> {
                               Icons.my_location,
                             ),
                             onPressed: () {
-                              Navigator.of(context).pushNamed(MyMap.routeName);
+                              //Navigator.of(context).pushNamed(MyMap.routeName);
                             },
                           ),
                         ),
@@ -326,7 +326,7 @@ class _AddHostelState extends State<AddHostel> {
                       alignment: Alignment.center,
                       width: dSize.width * 0.50 - 22.5,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
@@ -337,7 +337,7 @@ class _AddHostelState extends State<AddHostel> {
                       child: DropdownButtonFormField<String>(
                         style: _hintStyle,
                         elevation: 0,
-                        value: hostel.genderCategory ?? gender[0],
+                        value: hostel!.genderCategory ?? gender[0],
                         //isExpanded: true,
                         icon: Icon(
                           Icons.keyboard_arrow_down,
@@ -349,7 +349,7 @@ class _AddHostelState extends State<AddHostel> {
                         onChanged: (val) {
                           FocusScope.of(context).requestFocus(new FocusNode());
                         },
-                        onSaved: (val) => hostel.genderCategory = val,
+                        onSaved: (val) => hostel!.genderCategory = val,
                         items: gender
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
@@ -367,7 +367,7 @@ class _AddHostelState extends State<AddHostel> {
                       alignment: Alignment.center,
                       width: dSize.width * 0.50 - 22.5,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
@@ -378,11 +378,11 @@ class _AddHostelState extends State<AddHostel> {
                       child: DropdownButtonFormField<String>(
                         style: _hintStyle,
                         elevation: 0,
-                        value: hostel.category ?? hostelType[0],
+                        value: hostel!.category ?? hostelType[0],
                         onChanged: (val) {
                           FocusScope.of(context).requestFocus(new FocusNode());
                         },
-                        onSaved: (val) => hostel.category = val,
+                        onSaved: (val) => hostel!.category = val,
                         icon: Icon(
                           Icons.keyboard_arrow_down,
                         ),
@@ -423,9 +423,9 @@ class _AddHostelState extends State<AddHostel> {
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                     children: <Widget>[
-                      ...List.generate(imageUrls.length, (index) {
+                      ...List.generate(imageUrls!.length, (index) {
                         return gridImage(
-                            imageUrls[index], index, deleteAsset, true);
+                            imageUrls![index], index, deleteAsset, true);
                       }),
                       ...List.generate(images.length, (index) {
                         Asset asset = images[index];
@@ -535,7 +535,7 @@ Widget gridWidget(int index, CommonFacility obj) {
         ),
       ),
       Text(
-        obj.name,
+        obj.name!,
         textAlign: TextAlign.center,
         style: TextStyle(
             height: 1, color: Colors.black, fontWeight: FontWeight.w500),

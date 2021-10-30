@@ -13,7 +13,7 @@ class AuthCard extends StatefulWidget {
 
 class _AuthCardState extends State<AuthCard>{
   final GlobalKey<FormState> _formKey = GlobalKey();
-  Map<String, String> _authData = {
+  Map<String, String?> _authData = {
     'email': '',
     'password': '',
   };
@@ -23,16 +23,16 @@ class _AuthCardState extends State<AuthCard>{
   bool _confirmPasswordVisible=false;
 
   Future<void> _submit() async {
-    if (!_formKey.currentState.validate()){
+    if (!_formKey.currentState!.validate()){
       return;
     }
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
     });
     try {
       await Provider.of<Auth>(context, listen: false)
-          .signUp(_authData['email'], _authData['password']);
+          .signUp(_authData['email']!, _authData['password']!);
 //      showErrorDialog(
 //        context: context,
 //        message: "Check Your Provided Email",
@@ -40,7 +40,7 @@ class _AuthCardState extends State<AuthCard>{
 //        fun: dialogExecute,
 //      );
     } catch (error) {
-      String msg = error.message;
+      String? msg = error.toString();
       print(msg);
       //showErrorDialog(context: context, message: msg);
     }
@@ -102,7 +102,7 @@ class _AuthCardState extends State<AuthCard>{
                     validator: (value) {
                       if (!RegExp(
                           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                          .hasMatch(value)) {
+                          .hasMatch(value!)) {
                         return 'Invalid email!';
                       }
                       return null;
@@ -157,7 +157,7 @@ class _AuthCardState extends State<AuthCard>{
                     ),
                     controller: _passwordController,
                     validator: (value) {
-                      if (value.isEmpty || value.length < 5) {
+                      if (value!.isEmpty || value.length < 5) {
                         return 'Password is too short!';
                       }
                       return null;

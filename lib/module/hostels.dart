@@ -209,7 +209,7 @@ class Hostels with ChangeNotifier {
                 id: roomData["id"].toString(),
                 bed: roomData["bed"].toString(),
                 description: roomData["description"].toString(),
-                rent: roomData["rent"] as double,
+                rent: roomData["rent"] as double?,
                 isBath: roomData["isBath"].toString(),
                 isFridge: roomData["isFridge"].toString(),
                 isAC: roomData["isAC"].toString(),
@@ -228,7 +228,11 @@ class Hostels with ChangeNotifier {
   }
   Future<void> fetchAllHostel() async{
     try{
+      if (_items.length!=0)
+        return;
+      print("GHAHA");
       final response=await FirebaseFirestore.instance.collection("hostels").get();
+      print("Done");
       List<Hostel> localHostel=[];
       response.docs.forEach((hostelData) {
         localHostel.add(
@@ -252,7 +256,7 @@ class Hostels with ChangeNotifier {
                 id: roomData["id"].toString(),
                 bed: roomData["bed"].toString(),
                 description: roomData["description"].toString(),
-                rent: roomData["rent"] as double,
+                rent: roomData["rent"] as double?,
                 isBath: roomData["isBath"].toString(),
                 isFridge: roomData["isFridge"].toString(),
                 isAC: roomData["isAC"].toString(),
@@ -263,7 +267,10 @@ class Hostels with ChangeNotifier {
         );
       }
       );
+      print("HAHAHA");
       _items=localHostel;
+      _items.addAll([...localHostel]);
+      print("GHAHA");
       notifyListeners();
     }catch(error){
       throw(error);

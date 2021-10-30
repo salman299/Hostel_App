@@ -7,7 +7,7 @@ import '../module/hostel.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class HostelTile extends StatefulWidget {
-  Hostel hostel;
+  Hostel? hostel;
   int index;
   HostelTile(this.hostel,this.index);
 
@@ -16,11 +16,11 @@ class HostelTile extends StatefulWidget {
 }
 
 class _HostelTileState extends State<HostelTile> {
-  double minRent=double.infinity;
+  double? minRent=double.infinity;
   @override
   void initState() {
-    widget.hostel.roomCategories.forEach((element) {
-      if(element.rent!=null && element.rent<minRent)
+    widget.hostel!.roomCategories!.forEach((element) {
+      if(element.rent!=null && element.rent!<minRent!)
         minRent=element.rent;
     });
     // TODO: implement initState
@@ -28,8 +28,8 @@ class _HostelTileState extends State<HostelTile> {
   }
   @override
   Widget build(BuildContext context) {
-    if (widget.hostel.images.length!=0)
-      print(widget.hostel.images[0]);
+    if (widget.hostel!.images!.length!=0)
+      print(widget.hostel!.images![0]);
     final dSize=MediaQuery.of(context).size;
     return GestureDetector(
       onTap: (){
@@ -47,9 +47,9 @@ class _HostelTileState extends State<HostelTile> {
                       width: dSize.width*0.25,
                       height: dSize.width*0.25,
                       color: Colors.white,
-                      child: widget.hostel.images.length==0? Image.asset("assets/hotel.png"):
+                      child: widget.hostel!.images!.length==0? Image.asset("assets/hotel.png"):
                       CachedNetworkImage(
-                                  imageUrl: widget.hostel.images[0],
+                                  imageUrl: widget.hostel!.images![0],
                                   placeholderFadeInDuration: Duration(seconds: 2),
                                   placeholder:(context,url)=>Opacity(child: Image.asset("assets/hotel-1.png"), opacity: 0.5,),
                                   fit: BoxFit.fill,
@@ -68,11 +68,11 @@ class _HostelTileState extends State<HostelTile> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(widget.hostel.name,style: TextStyle(fontWeight: FontWeight.w700,color: Colors.black,fontSize: dSize.height*0.022),),
+                          Text(widget.hostel!.name!,style: TextStyle(fontWeight: FontWeight.w700,color: Colors.black,fontSize: dSize.height*0.022),),
                           Icon(CustomIcons.phone,size: dSize.height*0.025,)
                         ],
                       ),
-                      Text(widget.hostel.address,style: TextStyle(fontWeight: FontWeight.w300,color: Color(0xFF7B7E84),fontSize: dSize.height*0.018),),
+                      Text(widget.hostel!.address!,style: TextStyle(fontWeight: FontWeight.w300,color: Color(0xFF7B7E84),fontSize: dSize.height*0.018),),
                       Text("Start From: $minRent",style: TextStyle(fontWeight: FontWeight.w300,color: Color(0xFF7B7E84),fontSize: dSize.height*0.018),),
                       Padding(
                         padding: EdgeInsets.only(top: 10),

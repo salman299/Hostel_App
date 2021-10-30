@@ -9,19 +9,19 @@ class MyFacilities with ChangeNotifier {
     CommonFacility(id: "1", name: "LCD", icon: CustomIcons.lcd, choosen: false),
     CommonFacility(
         id: "2",
-        name: "Water\nFilter",
+        name: "Water Filter",
         icon: CustomIcons.water_filter1,
         choosen: false),
     CommonFacility(
         id: "3",
-        name: "Air\nConditioner",
+        name: "Air Conditioner",
         icon: CustomIcons.air_conditioner,
         choosen: false),
     CommonFacility(
         id: "4", name: "Mosque", icon: CustomIcons.mosque, choosen: false),
     CommonFacility(
         id: "5",
-        name: "Generator\n/UPS",
+        name: "Generator/UPS",
         icon: CustomIcons.renewable_energy,
         choosen: false),
     CommonFacility(
@@ -40,7 +40,7 @@ class MyFacilities with ChangeNotifier {
         id: "12", name: "Parking", icon: CustomIcons.parking, choosen: false),
     CommonFacility(
         id: "13",
-        name: "Study\nTable",
+        name: "Study Table",
         icon: CustomIcons.work_table,
         choosen: false),
     CommonFacility(
@@ -91,10 +91,10 @@ class MyFacilities with ChangeNotifier {
       false
     ];
   }
-  void addItemList(List<String> ids) {
+  void addItemList(List<String?> ids) {
     clear();
     ids.forEach((element) {
-      chooseItems[int.parse(element)]=true;
+      chooseItems[int.parse(element!)]=true;
     });
   }
   void addItems(String id) {
@@ -112,14 +112,14 @@ class MyFacilities with ChangeNotifier {
   List<CommonFacility> chooseList() {
     List<CommonFacility> myList = [];
     _items.forEach((element) {
-      if (chooseItems[int.parse(element.id)])
+      if (chooseItems[int.parse(element.id!)])
         myList.add(element);
     });
     return myList;
   }
 
-  List<String> selectedItems(){
-    List<String> ids=[];
+  List<String?> selectedItems(){
+    List<String?> ids=[];
     for(int i=0;i<_items.length;i++){
       if(chooseItems[i])
         ids.add(_items[i].id);
@@ -130,6 +130,13 @@ class MyFacilities with ChangeNotifier {
     return [..._items];
   }
 
+  List<String?> get getNames {
+    List<String?> names=[];
+    _items.forEach((element) {
+      names.add(element.name);
+    });
+    return names;
+  }
   Future<List<CommonFacility>> getBuyName(String search) async {
     final itemId = [];
     search = search.toLowerCase();
@@ -138,7 +145,7 @@ class MyFacilities with ChangeNotifier {
         itemId.add(items[i]);
       }
     }
-    return [...itemId];
+    return [...itemId as Iterable<CommonFacility>];
   }
 }
 

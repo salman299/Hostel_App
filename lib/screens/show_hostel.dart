@@ -5,11 +5,17 @@ import 'package:provider/provider.dart';
 import '../custom_icons_icons.dart';
 import '../widgets/hostel_tile.dart';
 import '../widgets/dialog_box.dart';
-class ShowHostels extends StatelessWidget {
+class ShowHostels extends StatefulWidget {
   static const routeName = '/show_hostel';
+
+  @override
+  _ShowHostelsState createState() => _ShowHostelsState();
+}
+
+class _ShowHostelsState extends State<ShowHostels> {
+  bool isExpended=false;
   @override
   Widget build(BuildContext context) {
-
     final dSize=MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
@@ -37,16 +43,45 @@ class ShowHostels extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                        shape: BoxShape.rectangle,
+                    if(!isExpended)
+                      Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.zero,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white.withOpacity(0.17),
+                        ),
+                        width: dSize.width*0.80,
+                        child: TextFormField(
+                          //textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 15,vertical: 0),
+                            hintText: "Search Hostel",
+                            hintStyle: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
-                      padding: EdgeInsets.all(5),
-                      height: dSize.height*0.045,
-                      width: dSize.height*0.045,
-                      child: Icon(CustomIcons.search,color: Colors.white,size: dSize.height*0.025,),
+                    if (isExpended)
+                    GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          isExpended=true;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          shape: BoxShape.rectangle,
+                        ),
+                        padding: EdgeInsets.all(5),
+                        height: dSize.height*0.045,
+                        width: dSize.height*0.045,
+                        child: Icon(CustomIcons.search,color: Colors.white,size: dSize.height*0.025,),
+                      ),
                     ),
                     Icon(CustomIcons.logout1),
                   ],

@@ -15,12 +15,12 @@ class RoomCategoryTile extends StatefulWidget {
 
 class _RoomCategoryTileState extends State<RoomCategoryTile> {
   bool isExpended = false;
-  String bed;
-  String bath;
-  String ac;
-  String fridge;
-  String description;
-  String rent;
+  String? bed;
+  String? bath;
+  String? ac;
+  String? fridge;
+  String? description;
+  String? rent;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class _RoomCategoryTileState extends State<RoomCategoryTile> {
                     alignment: Alignment.center,
 //                width: dSize.width*0.50-22.5,
                     margin: EdgeInsets.all(5),
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Color(0xFFF5F5F5),
@@ -89,7 +89,7 @@ class _RoomCategoryTileState extends State<RoomCategoryTile> {
                     alignment: Alignment.center,
 //                width: dSize.width*0.50-22.5,
                     margin: EdgeInsets.all(5),
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Color(0xFFF5F5F5),
@@ -129,7 +129,7 @@ class _RoomCategoryTileState extends State<RoomCategoryTile> {
                     alignment: Alignment.center,
 //                width: dSize.width*0.50-22.5,
                     margin: EdgeInsets.all(5),
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Color(0xFFF5F5F5),
@@ -167,7 +167,7 @@ class _RoomCategoryTileState extends State<RoomCategoryTile> {
                     alignment: Alignment.center,
 //                width: dSize.width*0.50-22.5,
                     margin: EdgeInsets.all(5),
-                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Color(0xFFF5F5F5),
@@ -206,7 +206,7 @@ class _RoomCategoryTileState extends State<RoomCategoryTile> {
                   flex: 1,
                   child: TextFormField(
                     //style: _hintStyle,
-                    initialValue:  data.items[widget.index].rent.toString() ?? null,
+                    initialValue:  data.items[widget.index].rent.toString(),
                     cursorColor: Theme.of(context).primaryColor,
                     onChanged: (val){
                       rent = val;

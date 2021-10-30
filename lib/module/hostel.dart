@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 
 
 class RoomCategory {
-  String id;
+  String? id;
   String bed;
   String isBath;
   String isAC;
   String isFridge;
-  double rent;
-  String description;
+  double? rent;
+  String? description;
 
   RoomCategory(
       {this.id,
@@ -21,29 +21,29 @@ class RoomCategory {
 }
 
 class CommonFacility {
-  String id;
-  String name;
-  IconData icon;
-  bool choosen;
+  String? id;
+  String? name;
+  IconData? icon;
+  bool? choosen;
   CommonFacility({this.id, this.name, this.icon, this.choosen});
 }
 
 
 class Hostel {
-  String id;
-  String name;
-  String phone;
-  String whatsApp;
-  String facebookUrl;
-  String address;
-  double latitude;
-  double longitude;
-  String category;
-  String genderCategory;
-  bool isPublished;
-  List<String> images = [];
-  List<String> facilities = [];
-  List<RoomCategory> roomCategories=[];
+  String? id;
+  String? name;
+  String? phone;
+  String? whatsApp;
+  String? facebookUrl;
+  String? address;
+  double? latitude;
+  double? longitude;
+  String? category;
+  String? genderCategory;
+  bool? isPublished;
+  List<String>? images = [];
+  List<String?>? facilities = [];
+  List<RoomCategory>? roomCategories=[];
 
   Hostel({
     this.id,
